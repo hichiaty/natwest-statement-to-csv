@@ -2,13 +2,14 @@ import tabula
 import pandas as pd
 import glob
 import argparse
+from tqdm import tqdm
 parser = argparse.ArgumentParser(
     description='Convert Natwest Statement PDF to CSV')
 parser.add_argument('--pdf', '-p', type=str, help='PDF file path')
 
 
 def pdf_to_csv(pdf_path, csv_path):
-    table = tabula.read_pdf('statement.pdf', pages=1)
+    table = tabula.read_pdf(pdf_path, pages=1)
     current_date = table[2].columns[0]
     res = {'Date': [], 'Type': [], 'Description': [],
            'Paid in': [], 'Paid out': [], 'Balance': []}
@@ -49,6 +50,6 @@ if __name__ == '__main__':
     else:
         pdfs = [args.pdf]
 
-    for pdf in pdfs:
+    for pdf in tqdm(pdfs):
         csv_path = pdf.replace('.pdf', '.csv')
         pdf_to_csv(pdf, csv_path)
