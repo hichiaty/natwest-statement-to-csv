@@ -25,20 +25,20 @@ def pdf_to_csv(pdf_path, csv_path):
         tables = tabula.read_pdf(pdf_path, pages=page,
                                  lattice=True)
         for table in tables:
-            if 'Branch Details' in table.columns or table.empty:
+            if 'Branch Details' in table.columns or (table.empty and 'Date' in table.columns):
                 continue
 
             res = {'Date': [], 'Type': [], 'Description': [],
                    'Paid in': [], 'Paid out': [], 'Balance': []}
 
             if current_date is None:
+                current_date = table.columns[0]
                 res['Date'].append(current_date)
                 res['Type'].append(table.columns[1])
                 res['Description'].append(table.columns[2])
                 res['Paid in'].append(table.columns[3])
                 res['Paid out'].append(table.columns[4])
                 res['Balance'].append(table.columns[5])
-                current_date = table.columns[0]
 
             for i, row in table.iterrows():
                 if row[0] != current_date and isinstance(row[0], str):
