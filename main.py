@@ -63,7 +63,7 @@ def pdf_to_csv(pdf_path, csv_path):
 
     final_df = pd.concat(dfs)
     final_df.to_csv(csv_path, index=False)
-    return df
+    return
 
 
 if __name__ == '__main__':
@@ -73,14 +73,14 @@ if __name__ == '__main__':
     else:
         pdfs = [args.pdf]
 
-    dfs = []
     for pdf in tqdm(pdfs):
         csv_path = pdf.replace('.pdf', '.csv')
-        dfs.append(pdf_to_csv(pdf, csv_path))
+        pdf_to_csv(pdf, csv_path)
     # check if merge is required
     if args.merge:
         print('Merging CSV files')
-        df = pd.concat(dfs)
+        csv_files = [i.replace('.pdf', '.csv') for i in pdfs]
+        df = pd.concat([pd.read_csv(csv) for csv in tqdm(csv_files)])
         # sort by Date column
         df = df.sort_values(by='Date')
         df.to_csv(os.path.join(os.path.dirname(
